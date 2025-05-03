@@ -1,0 +1,22 @@
+# Copyright (c) 2025 Sebastian Pipping <sebastian@pipping.org>
+#
+# Licensed under GNU Affero General Public License v3.0 or later
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.11.2
+    hooks:
+      - id: ruff
+        args:
+          - --fix
+      - id: ruff-format
