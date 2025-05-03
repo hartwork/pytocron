@@ -78,6 +78,11 @@ def _inner_main() -> Never:
               SENTRY_DSN            Sentry [d]ata [s]ource [n]ame URL
               SENTRY_ENVIRONMENT    Sentry Environment (default: "production")
               SENTRY_RELEASE        Version or Git SHA1 to use with Sentry
+
+            Software libre licensed under AGPL v3 or later.
+            Brought to you by Sebastian Pipping <sebastian@pipping.org>.
+
+            Please report bugs at https://github.com/hartwork/pytocron/issues — thank you!
         """),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
