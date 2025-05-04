@@ -4,8 +4,8 @@
 
 # pytocron
 
-**pytocron** is a cron implemenation
-targetting containers,
+**pytocron** is a cron implementation
+targeting containers,
 written in Python,
 with seconds and year resolution,
 native support for [Healthchecks.io](https://healthchecks.io/) and
@@ -43,7 +43,7 @@ or
 ```
 
 
-# Comparision with other crons
+# Comparison with other crons
 
 | &nbsp; | [pytocron](#) | [Supercronic](https://github.com/aptible/supercronic) | [Vixie Cron](https://github.com/vixie/cron) |
 | -- | -- | -- | -- |
