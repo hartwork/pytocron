@@ -11,7 +11,7 @@ import os
 import shutil
 import signal
 import sys
-from textwrap import dedent
+from textwrap import dedent, indent
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -71,6 +71,14 @@ def _initialize_sentry() -> None:
 
 def _inner_main() -> Never:
     parser = argparse.ArgumentParser(
+        usage=indent(
+            dedent("""
+            %(prog)s [OPTIONS] CRONTAB
+            %(prog)s --help
+            %(prog)s --version
+        """),
+            "  ",
+        ),
         prog="pytocron",
         description="Container cron with seconds resolution",
         epilog=dedent("""\
