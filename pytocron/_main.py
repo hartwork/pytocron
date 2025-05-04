@@ -17,6 +17,7 @@ if TYPE_CHECKING:
 
 from ._crontab_parser import iterate_crontab_entries
 from ._runner import run_cron_jobs
+from ._version import __version__
 
 _LOG_LEVELS = {
     "DEBUG": logging.DEBUG,
@@ -58,6 +59,11 @@ def _inner_main() -> Never:
         default=False,
         action="store_true",
         help="Do not actually run commands (default: do run commands)",
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
     )
     parser.add_argument("crontab_path", metavar="CRONTAB", help="Path to crontab file")
     config = parser.parse_args()
