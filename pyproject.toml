@@ -42,6 +42,7 @@ tests = [
   "coverage",
   "parameterized",
   "pytest",
+  "sentry-sdk",
 ]
 
 [project.scripts]

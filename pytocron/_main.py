@@ -7,9 +7,11 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import shutil
 import signal
 import sys
+from textwrap import dedent
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -24,6 +26,8 @@ _LOG_LEVELS = {
     "ERROR": logging.ERROR,
     "INFO": logging.INFO,
 }
+
+_log = logging.getLogger(__name__)
 
 
 def _require_single_command(command: str, software_package_hint: str) -> None:
@@ -43,10 +47,39 @@ def _require_commands() -> None:
         _require_single_command(command=command, software_package_hint=software_package_hint)
 
 
+def _initialize_sentry() -> None:
+    if os.environ.get("SENTRY_DSN"):
+        _log.info("Detected SENTRY_DSN, activating Sentry...")
+
+        try:
+            import sentry_sdk
+            from sentry_sdk.integrations.logging import LoggingIntegration
+        except ImportError:
+            _log.error(
+                "Use of Sentry requested via setting SENTRY_DSN but "
+                "Python package 'sentry_sdk' is not installed, aborted.",
+            )
+            sys.exit(2)
+
+        sentry_sdk.init(
+            default_integrations=False,
+            integrations=[
+                LoggingIntegration(),
+            ],
+        )
+
+
 def _inner_main() -> Never:
     parser = argparse.ArgumentParser(
         prog="pytocron",
         description="Container cron with seconds resolution",
+        epilog=dedent("""\
+            environment variables:
+              SENTRY_DSN            Sentry [d]ata [s]ource [n]ame URL
+              SENTRY_ENVIRONMENT    Sentry Environment (default: "production")
+              SENTRY_RELEASE        Version or Git SHA1 to use with Sentry
+        """),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
         "--log-level",
@@ -75,6 +108,8 @@ def _inner_main() -> Never:
     )
 
     _require_commands()
+
+    _initialize_sentry()
 
     with open(config.crontab_path) as f:
         crontab_entries = list(iterate_crontab_entries(f))
