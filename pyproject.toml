@@ -1,0 +1,92 @@
+# Copyright (c) 2025 Sebastian Pipping <sebastian@pipping.org>
+#
+# Licensed under GNU Affero General Public License v3.0 or later
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pytocron"
+dynamic = ["version"]
+description = "Container cron with seconds resolution"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "AGPL-3.0-or-later" }
+keywords = [
+  "automation",
+  "cron",
+]
+authors = [
+  { name = "Sebastian Pipping", email = "sebastian@pipping.org" },
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: Implementation :: CPython",
+]
+dependencies = [
+  "croniter",
+  "requests",
+]
+
+[project.optional-dependencies]
+tests = [
+  "coverage",
+  "parameterized",
+  "pytest",
+]
+
+[project.scripts]
+pytocron = "pytocron._main:main"
+
+[project.urls]
+Homepage = "https://github.com/hartwork/pytocron"
+
+[tool.hatch.version]
+path = "pytocron/_version.py"
+
+[tool.hatch.build.targets.sdist]
+only-include = [
+  "pytocron",
+]
+
+[tool.coverage.run]
+branch = true
+source_pkgs = ["pytocron"]
+
+[tool.coverage.report]
+omit = [
+  "*/tests/test_*.py",
+]
+show_missing = true
+skip_empty = true
+
+[tool.ruff]
+line-length = 99
+target-version = "py310"
+
+[tool.ruff.lint]
+select = [
+  "ALL",
+]
+ignore = [
+  "ANN",  # flake8-annotations
+  "D1",  # Missing docstring in public ...
+  "D203",  # one-blank-line-before-class, to unclash with D211
+  "D212",  # multi-line-summary-first-line, to unclash with D213
+  "G004",  # Logging statement uses f-string
+  "S101",  # Use of `assert` detected
+  "SLF001",  # Private member accessed
+  "PT",  # flake8-pytest-style
+  "PTH",  # flake8-use-pathlib
+  "T201",  # `print` found
+  "TID252",  # Prefer absolute imports over relative imports from parent modules
+]
