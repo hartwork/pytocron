@@ -52,7 +52,7 @@ or
 | ∟ Targets | containers | containers | non-container systems |
 | ∟ Environment variables | kept | kept | ? |
 | ∟ Multi-user mode | ✘ | ✘ | ✔ |
-| ∟ Logging target | stdout, stderr | stdout, stderr | syslog *or* e-mail |
+| ∟ Logging target | stdout, stderr | stdout, stderr | syslog *or* log file |
 | ∟ Log rotation support | ✘ | ✔ | ✔ |
 | ∟ Command shell | `bash -e -u` | `/bin/sh` | `/bin/sh` |
 | ∟ Daemonization | ✘ | ✘ | ✔ |
