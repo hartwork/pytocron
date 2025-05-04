@@ -35,6 +35,7 @@ classifiers = [
 dependencies = [
   "croniter",
   "requests",
+  "urllib3",
 ]
 
 [project.optional-dependencies]
