@@ -45,7 +45,7 @@ class _PingingFailedError(Exception): ...
 def _notify_healthchecks_io(hc_ping_url: str, exit_code: int) -> None:
     url = hc_ping_url if exit_code == 0 else f"{hc_ping_url}/{exit_code}"
     try:
-        response = requests.get(url, timeout=1.0)
+        response = requests.get(url, timeout=2.0)
         response.raise_for_status()
     except (requests.exceptions.HTTPError, urllib3.exceptions.ReadTimeoutError) as e:
         message = f"Pinging URL {url!r} failed."
