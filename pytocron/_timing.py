@@ -21,4 +21,4 @@ def epoch_to_local_datetime(epoch: float) -> datetime.datetime:
 
 
 def simplify_datetime(dt: datetime.datetime) -> datetime.datetime:
-    return dt.replace(microsecond=0).replace(tzinfo=None)
+    return dt.replace(microsecond=0)

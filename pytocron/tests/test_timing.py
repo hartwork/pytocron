@@ -15,6 +15,10 @@ from .._timing import (
 )
 
 
+def _without_micros_and_timezone(dt: datetime.datetime) -> datetime.datetime:
+    return dt.replace(microsecond=0).replace(tzinfo=None)
+
+
 class LocaltimeEpochTest(TestCase):
     def test(self):
         self.assertAlmostEqual(localtime_epoch(), time.time(), places=3)
@@ -38,14 +42,16 @@ class EpochToLocalDatetime(TestCase):
         actual_naive_dt = epoch_to_local_datetime(localtime_epoch())
 
         self.assertEqual(actual_naive_dt.tzinfo, _get_local_timezone())
-        self.assertEqual(simplify_datetime(actual_naive_dt), simplify_datetime(expected_naive_dt))
+        self.assertEqual(
+            _without_micros_and_timezone(actual_naive_dt),
+            _without_micros_and_timezone(expected_naive_dt),
+        )
 
 
 class SimplifyDatetimeTest(TestCase):
     def test(self):
         original_dt = datetime.datetime.fromisoformat("2011-11-04T00:05:23.123456+04:00")
-        expected_dt = datetime.datetime.fromisoformat("2011-11-04T00:05:23")
-        self.assertIsNone(expected_dt.tzinfo)  # self-test
+        expected_dt = datetime.datetime.fromisoformat("2011-11-04T00:05:23+04:00")
 
         actual_dt = simplify_datetime(original_dt)
 
