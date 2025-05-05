@@ -18,14 +18,9 @@ if TYPE_CHECKING:
     from typing import Never
 
 from ._crontab_parser import iterate_crontab_entries
+from ._logging import LOG_LEVELS, configure_logging
 from ._runner import run_cron_jobs
 from ._version import __version__
-
-_LOG_LEVELS = {
-    "DEBUG": logging.DEBUG,
-    "ERROR": logging.ERROR,
-    "INFO": logging.INFO,
-}
 
 _log = logging.getLogger(__name__)
 
@@ -96,7 +91,7 @@ def _inner_main() -> Never:
     )
     parser.add_argument(
         "--log-level",
-        choices=_LOG_LEVELS.keys(),
+        choices=LOG_LEVELS.keys(),
         default="INFO",
         help="Logging level (default: %(default)s)",
     )
@@ -114,11 +109,7 @@ def _inner_main() -> Never:
     parser.add_argument("crontab_path", metavar="CRONTAB", help="Path to crontab file")
     config = parser.parse_args()
 
-    logging.basicConfig(
-        level=_LOG_LEVELS[config.log_level],
-        stream=sys.stderr,
-        format="pytocron [%(asctime)s] %(levelname)s: %(message)s",
-    )
+    configure_logging(config.log_level)
 
     _require_commands()
 
