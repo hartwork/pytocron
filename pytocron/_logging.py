@@ -12,6 +12,8 @@ from colorama import Fore
 from ._timing import epoch_to_local_datetime
 
 LOG_LEVELS = {
+    # NOTE: There is no WARNING/WARN or CRITICAL/FATAL or NOTSET in here
+    #       because pytocron does not use these levels by itself
     "DEBUG": logging.DEBUG,
     "ERROR": logging.ERROR,
     "INFO": logging.INFO,
