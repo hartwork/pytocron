@@ -19,7 +19,6 @@ from multiprocessing import Process
 from typing import TYPE_CHECKING
 
 import requests
-import urllib3
 
 if TYPE_CHECKING:
     from typing import Never
@@ -47,7 +46,7 @@ def _notify_healthchecks_io(hc_ping_url: str, exit_code: int) -> None:
     try:
         response = requests.get(url, timeout=2.0)
         response.raise_for_status()
-    except (requests.exceptions.HTTPError, urllib3.exceptions.ReadTimeoutError) as e:
+    except requests.exceptions.RequestException as e:
         message = f"Pinging URL {url!r} failed."
         raise _PingingFailedError(message) from e
 
