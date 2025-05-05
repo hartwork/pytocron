@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from ._crontab_parser import CrontabEntry
 
 
-from ._timing import epoch_to_local_datetime, localtime_epoch, simplify_datetime
+from ._timing import epoch_to_local_datetime, localtime_epoch, without_micros
 
 _ATTRIBUTE_STARTED = "_started"
 
@@ -86,7 +86,7 @@ def _run_single_cron_job_forever(
 
         _log.info(
             f"Command {crontab_entry.command!r} now scheduled"
-            f" for {simplify_datetime(next_run_datetime)}"
+            f" for {without_micros(next_run_datetime)}"
             f" ({math.ceil(sleep_seconds)} seconds from now).",
         )
 

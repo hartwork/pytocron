@@ -20,5 +20,5 @@ def epoch_to_local_datetime(epoch: float) -> datetime.datetime:
     return datetime.datetime.fromtimestamp(epoch, tz=_get_local_timezone())
 
 
-def simplify_datetime(dt: datetime.datetime) -> datetime.datetime:
+def without_micros(dt: datetime.datetime) -> datetime.datetime:
     return dt.replace(microsecond=0)

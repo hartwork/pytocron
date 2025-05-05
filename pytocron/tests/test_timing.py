@@ -11,7 +11,7 @@ from .._timing import (
     _get_local_timezone,
     epoch_to_local_datetime,
     localtime_epoch,
-    simplify_datetime,
+    without_micros,
 )
 
 
@@ -48,11 +48,11 @@ class EpochToLocalDatetime(TestCase):
         )
 
 
-class SimplifyDatetimeTest(TestCase):
+class WithoutMicrosTest(TestCase):
     def test(self):
         original_dt = datetime.datetime.fromisoformat("2011-11-04T00:05:23.123456+04:00")
         expected_dt = datetime.datetime.fromisoformat("2011-11-04T00:05:23+04:00")
 
-        actual_dt = simplify_datetime(original_dt)
+        actual_dt = without_micros(original_dt)
 
         self.assertEqual(actual_dt, expected_dt)
