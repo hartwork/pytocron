@@ -91,6 +91,7 @@ def _inner_main() -> Never:
     )
     parser.add_argument(
         "--log-level",
+        dest="log_level_name",
         choices=LOG_LEVELS.keys(),
         default="INFO",
         help="Logging level (default: %(default)s)",
@@ -109,7 +110,7 @@ def _inner_main() -> Never:
     parser.add_argument("crontab_path", metavar="CRONTAB", help="Path to crontab file")
     config = parser.parse_args()
 
-    configure_logging(config.log_level)
+    configure_logging(config.log_level_name)
 
     _require_commands()
 
