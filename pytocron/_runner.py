@@ -46,7 +46,7 @@ def _notify_healthchecks_io(hc_ping_url: str, exit_code: int) -> None:
     try:
         response = requests.get(url, timeout=2.0)
         response.raise_for_status()
-    except (requests.exceptions.HTTPError, requests.exceptions.ReadTimeout) as e:
+    except requests.exceptions.RequestException as e:
         message = f"Pinging URL {url!r} failed."
         raise _PingingFailedError(message) from e
 
