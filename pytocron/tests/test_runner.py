@@ -166,7 +166,6 @@ class RunSingleCronJobForever(TestCase):
             _run_single_cron_job_forever(crontab_entry, pretend=False, _times=3)
 
         self.assertEqual(sleep_mock.call_count, 3)
-        print(sleep_mock.call_args_list)  ###########################
         for i in range(3):
             self.assertGreaterEqual(sleep_mock.call_args_list[i].args[0], 1)
 
