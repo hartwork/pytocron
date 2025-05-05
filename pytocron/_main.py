@@ -78,6 +78,7 @@ def _inner_main() -> Never:
         description="Container cron with seconds resolution",
         epilog=dedent("""\
             environment variables:
+              NO_COLOR              Disable use of color (default: auto-detect)
               SENTRY_DSN            Sentry [d]ata [s]ource [n]ame URL
               SENTRY_ENVIRONMENT    Sentry Environment (default: "production")
               SENTRY_RELEASE        Version or Git SHA1 to use with Sentry
