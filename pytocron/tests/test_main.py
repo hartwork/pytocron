@@ -12,8 +12,8 @@ from unittest.mock import patch
 
 from parameterized import parameterized
 
+from .._logging import LOG_LEVELS
 from .._main import (
-    _LOG_LEVELS,
     _initialize_sentry,
     _inner_main,
     _log,
@@ -90,7 +90,7 @@ class InnerMainTest(TestCase):
 
         self.assertIn(f"pytocron {__version__}", stdout.getvalue())
 
-    @parameterized.expand(_LOG_LEVELS.items())
+    @parameterized.expand(LOG_LEVELS.items())
     def test_log_level(self, log_level_name, expected_log_level):
         with (
             NamedTemporaryFile() as empty_file,
