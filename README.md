@@ -78,7 +78,7 @@ Thank you!
 
 # Security
 
-If you believ to have found a security issue within **pytocron**, please [reach out via e-mail](mailto:sebastian@pipping.org).
+If you believe to have found a security issue within **pytocron**, please [reach out via e-mail](mailto:sebastian@pipping.org).
 Thank you!
 
 
