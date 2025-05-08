@@ -3,11 +3,14 @@
 # Licensed under GNU Affero General Public License v3.0 or later
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+import datetime
 import re
 from dataclasses import dataclass
 from typing import IO
 
 import croniter
+
+from ._timing import _get_local_timezone
 
 _NAMED_FREQUENCY = {
     # second, minute, hour, day, month, weekday, year
@@ -61,9 +64,14 @@ class CrontabEntrySyntaxError(Exception):
         return f"Syntax {self.args[0]!r} is not valid."
 
 
-def _frequency_seven(text: str) -> croniter.croniter:
+def _frequency_seven(text: str, start_time: datetime.datetime | None = None) -> croniter.croniter:
+    if start_time is None:
+        start_time = datetime.datetime.now(tz=_get_local_timezone())
+
+    assert start_time.tzinfo is not None
+
     try:
-        return croniter.croniter(text, second_at_beginning=True)
+        return croniter.croniter(text, second_at_beginning=True, start_time=start_time)
     except croniter.CroniterBadCronError as e:
         raise CrontabEntrySyntaxError(text) from e
 
