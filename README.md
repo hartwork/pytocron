@@ -64,7 +64,7 @@ or
 | ∟ Seconds and year resolution | ✔ (forced) | ✔ (optional) | ✘ |
 | ∟ Implementation | [croniter](https://github.com/pallets-eco/croniter) | [cronexpr](https://github.com/aptible/supercronic/tree/master/cronexpr) | [custom](https://github.com/vixie/cron/blob/9cc8ab1087bb9ab861dd5595c41200683c9f6712/user.c#L41) |
 | Exceeded job runtime handling | auto-kill | overlapping or skips | ? |
-| Handling of [daylight saving time](https://en.wikipedia.org/wiki/Daylight_saving_time) | ? | ? | ? |
+| Handling of [daylight saving time](https://en.wikipedia.org/wiki/Daylight_saving_time) | skips, duplicates | ? | ? |
 | Signal handling | &nbsp; | &nbsp; | &nbsp; |
 | ∟ `SIGHUP` | shutdown | shutdown | log file reopen |
 | ∟ `SIGUSR2` | shutdown | crontab file reload | shutdown |
