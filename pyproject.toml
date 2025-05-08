@@ -43,6 +43,7 @@ tests = [
   "coverage",
   "parameterized",
   "pytest",
+  "pytz",
   "sentry-sdk",
 ]
 
