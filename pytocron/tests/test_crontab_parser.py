@@ -3,10 +3,13 @@
 # Licensed under GNU Affero General Public License v3.0 or later
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+import datetime
+import itertools
 from io import StringIO
 from textwrap import dedent
 from unittest import TestCase
 
+import pytz
 from parameterized import parameterized
 
 from .._crontab_parser import (
@@ -114,3 +117,54 @@ class IterateCrontabEntriesTest(TestCase):
         ]
         actual_entries = list(iterate_crontab_entries(StringIO(content)))
         self.assertEqual(actual_entries, expected_entries)
+
+
+class FrequencySevenDaylightSavingTest(TestCase):
+    berlin_time_zone = pytz.timezone("Europe/Berlin")
+    start_time = datetime.datetime(2025, 1, 1).astimezone(
+        berlin_time_zone,
+    )  # i.e. anything localized from before the first hit
+
+    def test_forwards(self):
+        # 2025-03-30 02:00 -> 03:00
+        frequency_str = "0 0 * 30 3 * 2025"
+        expected_isoformats = [
+            "2025-03-30T00:00:00+01:00",
+            "2025-03-30T01:00:00+01:00",
+            "2025-03-30T03:00:00+02:00",
+            "2025-03-30T04:00:00+02:00",
+        ]
+
+        actual_isoformats = [
+            datetime.datetime.fromtimestamp(epoch, tz=datetime.timezone.utc)
+            .astimezone(self.berlin_time_zone)
+            .isoformat()
+            for epoch in itertools.islice(
+                _frequency_seven(frequency_str, start_time=self.start_time),
+                4,
+            )
+        ]
+
+        self.assertEqual(actual_isoformats, expected_isoformats)
+
+    def test_backwards(self):
+        # 2025-10-26 03:00 -> 02:00
+        frequency_str = "0 0 * 26 10 * 2025"
+        expected_isoformats = [
+            "2025-10-26T00:00:00+02:00",
+            "2025-10-26T01:00:00+02:00",
+            "2025-10-26T02:00:00+02:00",
+            "2025-10-26T02:00:00+01:00",
+        ]
+
+        actual_isoformats = [
+            datetime.datetime.fromtimestamp(epoch, tz=datetime.timezone.utc)
+            .astimezone(self.berlin_time_zone)
+            .isoformat()
+            for epoch in itertools.islice(
+                _frequency_seven(frequency_str, start_time=self.start_time),
+                4,
+            )
+        ]
+
+        self.assertEqual(actual_isoformats, expected_isoformats)
