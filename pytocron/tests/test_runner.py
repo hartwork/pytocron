@@ -149,7 +149,7 @@ class ShutdownGracfullyTest(TestCase):
 class RunSingleCronJobForever(TestCase):
     _HC_PING_URL = "https://test.invalid/path"
 
-    def test_good(self):
+    def test_exit_code_0(self):
         crontab_entry = CrontabEntry(
             frequency=_frequency_seven("* * * * * * 2070"),
             command="true 1 2 3",
@@ -176,7 +176,7 @@ class RunSingleCronJobForever(TestCase):
                 (self._HC_PING_URL, 0),
             )
 
-    def test_bad(self):
+    def test_exit_code_1(self):
         crontab_entry = CrontabEntry(
             frequency=_frequency_seven("* * * * * * 2070"),
             command="false 1 2 3",
