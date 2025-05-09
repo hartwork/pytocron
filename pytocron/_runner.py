@@ -51,8 +51,10 @@ def _notify_healthchecks_io(hc_ping_url: str, exit_code: int) -> None:
         raise _PingingFailedError(message) from e
 
 
-def _create_cronjob_argv(command: str, tolerated_runtime_seconds: int) -> list[str]:
-    if tolerated_runtime_seconds <= _HARD_KILL_TOLERANCE_SECONDS:
+def _create_cronjob_argv(command: str, tolerated_runtime_seconds: int | None) -> list[str]:
+    if tolerated_runtime_seconds is None:
+        timeout_argv = []
+    elif tolerated_runtime_seconds <= _HARD_KILL_TOLERANCE_SECONDS:
         timeout_argv = [
             "timeout",
             "--signal=KILL",
