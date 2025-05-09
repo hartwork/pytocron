@@ -18,6 +18,7 @@ from itertools import count
 from multiprocessing import Process
 from typing import TYPE_CHECKING
 
+import croniter
 import requests
 
 if TYPE_CHECKING:
@@ -75,16 +76,27 @@ def _create_cronjob_argv(command: str, tolerated_runtime_seconds: int | None) ->
     return _SETSID_ARGV + timeout_argv + _SHELL_ARGV + [command]
 
 
-def _run_single_cron_job_forever(
+def _run_single_cron_job_forever(  # noqa: C901
     crontab_entry: CrontabEntry,
     *,
     pretend: bool,
     _times: int = -1,
 ) -> Never:
-    next_two_runs_epoch: list[float] = [crontab_entry.frequency.get_next() for _ in range(2)]
+    next_run_epoch: float | None
+    try:
+        next_run_epoch = crontab_entry.frequency.get_next()
+    except croniter.CroniterBadDateError:
+        return
+
+    second_next_run_epoch: float | None
+    try:
+        second_next_run_epoch = crontab_entry.frequency.get_next()
+    except croniter.CroniterBadDateError:
+        second_next_run_epoch = None
+
     for round_ in count(1):
-        next_run_datetime = epoch_to_local_datetime(next_two_runs_epoch[0])
-        sleep_seconds = next_two_runs_epoch[0] - localtime_epoch()
+        next_run_datetime = epoch_to_local_datetime(next_run_epoch)
+        sleep_seconds = next_run_epoch - localtime_epoch()
 
         _log.info(
             f"Command {crontab_entry.command!r} now scheduled"
@@ -95,10 +107,13 @@ def _run_single_cron_job_forever(
         if sleep_seconds > 0:
             time.sleep(sleep_seconds)
 
-        tolerated_runtime_seconds = max(
-            1,
-            math.ceil(next_two_runs_epoch[1] - next_two_runs_epoch[0]),
-        )
+        if second_next_run_epoch is None:
+            tolerated_runtime_seconds = None  # i.e. unlimited
+        else:
+            tolerated_runtime_seconds = max(
+                1,
+                math.ceil(second_next_run_epoch - next_run_epoch),
+            )
 
         argv = _create_cronjob_argv(crontab_entry.command, tolerated_runtime_seconds)
 
@@ -110,8 +125,6 @@ def _run_single_cron_job_forever(
         if exit_code != 0:
             _log.error(f"Command {crontab_entry.command!r} failed with exit code {exit_code}.")
 
-        next_two_runs_epoch = [next_two_runs_epoch[1], crontab_entry.frequency.get_next()]
-
         if crontab_entry.hc_ping_url is not None and not pretend:
             try:
                 _notify_healthchecks_io(crontab_entry.hc_ping_url, exit_code)
@@ -120,6 +133,16 @@ def _run_single_cron_job_forever(
                 #       the healthchecks.io setup will classify this as a problem and send an
                 #       alert or not.
                 _log.info(e.args[0])
+
+        next_run_epoch = second_next_run_epoch
+
+        if next_run_epoch is None:
+            break
+
+        try:
+            second_next_run_epoch = crontab_entry.frequency.get_next()
+        except croniter.CroniterBadDateError:
+            second_next_run_epoch = None
 
         # This helps testing break the infinite loop, and nothing more
         if round_ == _times:
