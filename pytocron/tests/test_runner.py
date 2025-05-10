@@ -3,6 +3,7 @@
 # Licensed under GNU Affero General Public License v3.0 or later
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+import datetime
 import signal
 import time
 from functools import partial
@@ -20,11 +21,12 @@ from .._runner import (
     _create_cronjob_argv,
     _notify_healthchecks_io,
     _PingingFailedError,
-    _run_single_cron_job_forever,
+    _run_single_cron_job,
     _run_single_cron_job_until_sigint,
     _shutdown_gracfully,
     run_cron_jobs,
 )
+from .._timing import _get_local_timezone
 
 
 class CreateCronjobArgvTest(TestCase):
@@ -146,12 +148,12 @@ class ShutdownGracfullyTest(TestCase):
             p1.terminate()
 
 
-class RunSingleCronJobForever(TestCase):
+class RunSingleCronJobTest(TestCase):
     _HC_PING_URL = "https://test.invalid/path"
 
-    def test_good(self):
+    def test_exit_code_0(self):
         crontab_entry = CrontabEntry(
-            frequency=_frequency_seven("* * * * * * 2070"),
+            frequency=_frequency_seven("1-3 1 1 1 1 * 2070"),
             command="true 1 2 3",
             hc_ping_url=self._HC_PING_URL,
         )
@@ -163,7 +165,7 @@ class RunSingleCronJobForever(TestCase):
                 autospec=True,
             ) as notify_healthchecks_io_mock,
         ):
-            _run_single_cron_job_forever(crontab_entry, pretend=False, _times=3)
+            _run_single_cron_job(crontab_entry, pretend=False)
 
         self.assertEqual(sleep_mock.call_count, 3)
         for i in range(3):
@@ -176,9 +178,9 @@ class RunSingleCronJobForever(TestCase):
                 (self._HC_PING_URL, 0),
             )
 
-    def test_bad(self):
+    def test_exit_code_1(self):
         crontab_entry = CrontabEntry(
-            frequency=_frequency_seven("* * * * * * 2070"),
+            frequency=_frequency_seven("1-3 1 1 1 1 * 2070"),
             command="false 1 2 3",
             hc_ping_url=self._HC_PING_URL,
         )
@@ -190,7 +192,7 @@ class RunSingleCronJobForever(TestCase):
                 side_effect=_PingingFailedError("did not work :)"),
             ) as notify_healthchecks_io_mock,
         ):
-            _run_single_cron_job_forever(crontab_entry, pretend=False, _times=3)
+            _run_single_cron_job(crontab_entry, pretend=False)
 
         self.assertEqual(sleep_mock.call_count, 3)
         for i in range(3):
@@ -203,8 +205,36 @@ class RunSingleCronJobForever(TestCase):
                 (self._HC_PING_URL, 1),
             )
 
+    @parameterized.expand(
+        [
+            ("never", "0 40 11 29 2 * 2025"),  # not a leap year
+            ("once", "0 40 11 9 5 * 2025"),
+            ("twice", "0,1 40 11 9 5 * 2025"),
+            ("thrice", "0,1,2 40 11 9 5 * 2025"),
+            ("four times", "0,1,2,3 40 11 9 5 * 2025"),
+        ],
+    )
+    def test_failure_to_find_next_date(self, _label, frequency):
+        start_time = datetime.datetime(
+            2025,
+            5,
+            9,
+            11,
+            tzinfo=_get_local_timezone(),
+        )  # anything prior to the first hit
+        crontab_entry = CrontabEntry(
+            frequency=_frequency_seven(frequency, start_time=start_time),
+            command="false 1 2 3",
+            hc_ping_url=self._HC_PING_URL,
+        )
+
+        with (
+            patch("time.sleep", autospec=True),
+        ):
+            _run_single_cron_job(crontab_entry, pretend=True)
+
 
 class RunSingleCronJobUntilSigint(TestCase):
     def test(self):
-        with patch("pytocron._runner._run_single_cron_job_forever", side_effect=KeyboardInterrupt):
+        with patch("pytocron._runner._run_single_cron_job", side_effect=KeyboardInterrupt):
             _run_single_cron_job_until_sigint(crontab_entry=None, pretend=True)
