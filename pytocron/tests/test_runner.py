@@ -21,7 +21,7 @@ from .._runner import (
     _create_cronjob_argv,
     _notify_healthchecks_io,
     _PingingFailedError,
-    _run_single_cron_job_forever,
+    _run_single_cron_job,
     _run_single_cron_job_until_sigint,
     _shutdown_gracfully,
     run_cron_jobs,
@@ -148,7 +148,7 @@ class ShutdownGracfullyTest(TestCase):
             p1.terminate()
 
 
-class RunSingleCronJobForever(TestCase):
+class RunSingleCronJobTest(TestCase):
     _HC_PING_URL = "https://test.invalid/path"
 
     def test_exit_code_0(self):
@@ -165,7 +165,7 @@ class RunSingleCronJobForever(TestCase):
                 autospec=True,
             ) as notify_healthchecks_io_mock,
         ):
-            _run_single_cron_job_forever(crontab_entry, pretend=False)
+            _run_single_cron_job(crontab_entry, pretend=False)
 
         self.assertEqual(sleep_mock.call_count, 3)
         for i in range(3):
@@ -192,7 +192,7 @@ class RunSingleCronJobForever(TestCase):
                 side_effect=_PingingFailedError("did not work :)"),
             ) as notify_healthchecks_io_mock,
         ):
-            _run_single_cron_job_forever(crontab_entry, pretend=False)
+            _run_single_cron_job(crontab_entry, pretend=False)
 
         self.assertEqual(sleep_mock.call_count, 3)
         for i in range(3):
@@ -231,10 +231,10 @@ class RunSingleCronJobForever(TestCase):
         with (
             patch("time.sleep", autospec=True),
         ):
-            _run_single_cron_job_forever(crontab_entry, pretend=True)
+            _run_single_cron_job(crontab_entry, pretend=True)
 
 
 class RunSingleCronJobUntilSigint(TestCase):
     def test(self):
-        with patch("pytocron._runner._run_single_cron_job_forever", side_effect=KeyboardInterrupt):
+        with patch("pytocron._runner._run_single_cron_job", side_effect=KeyboardInterrupt):
             _run_single_cron_job_until_sigint(crontab_entry=None, pretend=True)

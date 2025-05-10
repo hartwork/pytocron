@@ -75,11 +75,11 @@ def _create_cronjob_argv(command: str, tolerated_runtime_seconds: int | None) ->
     return _SETSID_ARGV + timeout_argv + _SHELL_ARGV + [command]
 
 
-def _run_single_cron_job_forever(  # noqa: C901
+def _run_single_cron_job(  # noqa: C901
     crontab_entry: CrontabEntry,
     *,
     pretend: bool,
-) -> Never:
+) -> None:
     next_run_epoch: float | None
     try:
         next_run_epoch = crontab_entry.frequency.get_next()
@@ -145,7 +145,7 @@ def _run_single_cron_job_forever(  # noqa: C901
 
 def _run_single_cron_job_until_sigint(crontab_entry: CrontabEntry, *, pretend: bool) -> None:
     with suppress(KeyboardInterrupt):
-        _run_single_cron_job_forever(crontab_entry=crontab_entry, pretend=pretend)
+        _run_single_cron_job(crontab_entry=crontab_entry, pretend=pretend)
 
 
 def _shutdown_gracfully(processes: list[Process], signal_number: int, _frame: object):
