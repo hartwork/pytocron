@@ -14,7 +14,6 @@ import subprocess
 import sys
 import time
 from contextlib import suppress
-from itertools import count
 from multiprocessing import Process
 from typing import TYPE_CHECKING
 
@@ -80,7 +79,6 @@ def _run_single_cron_job_forever(  # noqa: C901
     crontab_entry: CrontabEntry,
     *,
     pretend: bool,
-    _times: int = -1,
 ) -> Never:
     next_run_epoch: float | None
     try:
@@ -94,7 +92,7 @@ def _run_single_cron_job_forever(  # noqa: C901
     except croniter.CroniterBadDateError:
         second_next_run_epoch = None
 
-    for round_ in count(1):
+    while True:
         next_run_datetime = epoch_to_local_datetime(next_run_epoch)
         sleep_seconds = next_run_epoch - localtime_epoch()
 
@@ -143,10 +141,6 @@ def _run_single_cron_job_forever(  # noqa: C901
             second_next_run_epoch = crontab_entry.frequency.get_next()
         except croniter.CroniterBadDateError:
             second_next_run_epoch = None
-
-        # This helps testing break the infinite loop, and nothing more
-        if round_ == _times:
-            break
 
 
 def _run_single_cron_job_until_sigint(crontab_entry: CrontabEntry, *, pretend: bool) -> None:

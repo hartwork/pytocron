@@ -153,7 +153,7 @@ class RunSingleCronJobForever(TestCase):
 
     def test_exit_code_0(self):
         crontab_entry = CrontabEntry(
-            frequency=_frequency_seven("* * * * * * 2070"),
+            frequency=_frequency_seven("1-3 1 1 1 1 * 2070"),
             command="true 1 2 3",
             hc_ping_url=self._HC_PING_URL,
         )
@@ -165,7 +165,7 @@ class RunSingleCronJobForever(TestCase):
                 autospec=True,
             ) as notify_healthchecks_io_mock,
         ):
-            _run_single_cron_job_forever(crontab_entry, pretend=False, _times=3)
+            _run_single_cron_job_forever(crontab_entry, pretend=False)
 
         self.assertEqual(sleep_mock.call_count, 3)
         for i in range(3):
@@ -180,7 +180,7 @@ class RunSingleCronJobForever(TestCase):
 
     def test_exit_code_1(self):
         crontab_entry = CrontabEntry(
-            frequency=_frequency_seven("* * * * * * 2070"),
+            frequency=_frequency_seven("1-3 1 1 1 1 * 2070"),
             command="false 1 2 3",
             hc_ping_url=self._HC_PING_URL,
         )
@@ -192,7 +192,7 @@ class RunSingleCronJobForever(TestCase):
                 side_effect=_PingingFailedError("did not work :)"),
             ) as notify_healthchecks_io_mock,
         ):
-            _run_single_cron_job_forever(crontab_entry, pretend=False, _times=3)
+            _run_single_cron_job_forever(crontab_entry, pretend=False)
 
         self.assertEqual(sleep_mock.call_count, 3)
         for i in range(3):
