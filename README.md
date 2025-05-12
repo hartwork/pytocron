@@ -43,6 +43,48 @@ or
 ```
 
 
+# Usage
+
+```console
+# pytocron --help
+usage:
+  pytocron [OPTIONS] CRONTAB
+  pytocron --help
+  pytocron --version
+
+Container cron with seconds resolution
+
+positional arguments:
+  CRONTAB               Path to crontab file
+
+options:
+  -h, --help            show this help message and exit
+  --log-level {DEBUG,ERROR,INFO}
+                        Logging level (default: INFO)
+  --pretend             Do not actually run commands (default: do run commands)
+  --version             show program's version number and exit
+
+environment variables:
+  NO_COLOR              Disable use of color (default: auto-detect)
+  SENTRY_DSN            Sentry [d]ata [s]ource [n]ame URL
+  SENTRY_ENVIRONMENT    Sentry Environment (default: "production")
+  SENTRY_RELEASE        Version or Git SHA1 to use with Sentry
+
+Software libre licensed under AGPL v3 or later.
+Brought to you by Sebastian Pipping <sebastian@pipping.org>.
+
+Please report bugs at https://github.com/hartwork/pytocron/issues — thank you!
+```
+
+```console
+# pytocron --log-level ERROR <(echo '*/2 * * * * * * date')  # needs Bash
+Mo 12. Mai 17:44:24 CEST 2025
+Mo 12. Mai 17:44:26 CEST 2025
+Mo 12. Mai 17:44:28 CEST 2025
+^C
+```
+
+
 # Comparison with other crons
 
 | &nbsp; | [pytocron](#) | [Supercronic](https://github.com/aptible/supercronic) | [Vixie Cron](https://github.com/vixie/cron) |
