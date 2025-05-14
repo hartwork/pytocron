@@ -18,10 +18,13 @@ One particular prime use case is to feed uptime monitoring.
 For example, here is how I monitor availability of [my blog](https://blog.hartwork.org/):
 
 ```crontab
-# Check blog availability every 30 seconds
 # hc-ping: https://hc-ping.com/00000000-0000-0000-0000-000000000000
 */30 * * * * * * wget -qO- -T2 https://blog.hartwork.org/ | grep -qF 'Hartwork Blog'
 ```
+
+This would make pytocron check the blog for availability every 30 seconds and
+ping [Healthchecks.io](https://healthchecks.io/) with the resulting exit code
+because of the `# hc-ping: <URL>` comment line.
 
 Regarding name "pytocron":
 It was inspired by the term [pytosquatting](https://pytosquatting.overtag.dk/) and
