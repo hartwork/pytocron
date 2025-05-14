@@ -130,5 +130,6 @@ def main() -> Never:
     except KeyboardInterrupt:
         exit_code = 128 + signal.SIGINT
     except Exception as e:  # noqa: BLE001
+        _log.debug(e, exc_info=sys.exc_info())
         _log.error(e)
     sys.exit(exit_code)
