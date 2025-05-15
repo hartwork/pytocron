@@ -80,7 +80,7 @@ Please report bugs at https://github.com/hartwork/pytocron/issues — thank you!
 ```
 
 ```console
-# pytocron --log-level ERROR <(echo '*/2 * * * * * * LC_TIME=C date')  # needs Bash
+# pytocron --log-level ERROR <(echo '*/2 * * * * * * LC_TIME=C date')  # syntax needs Bash
 Thu May 15 02:36:06 CEST 2025
 Thu May 15 02:36:08 CEST 2025
 Thu May 15 02:36:10 CEST 2025
