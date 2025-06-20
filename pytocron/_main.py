@@ -47,8 +47,8 @@ def _initialize_sentry() -> None:
         _log.info("Detected SENTRY_DSN, activating Sentry...")
 
         try:
-            import sentry_sdk
-            from sentry_sdk.integrations.logging import LoggingIntegration
+            import sentry_sdk  # noqa: PLC0415
+            from sentry_sdk.integrations.logging import LoggingIntegration  # noqa: PLC0415
         except ImportError:
             _log.error(
                 "Use of Sentry requested via setting SENTRY_DSN but "
