@@ -39,7 +39,7 @@ _NAMED_FREQUENCY_LINE_PATTERN = (
 
 
 @dataclass
-class CrontabEntry:
+class CrontabEntry:  # noqa: PLW1641
     frequency: croniter.croniter
     command: str
     hc_ping_url: str | None
