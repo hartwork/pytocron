@@ -136,7 +136,7 @@ class FrequencySevenDaylightSavingTest(TestCase):
         ]
 
         actual_isoformats = [
-            datetime.datetime.fromtimestamp(epoch, tz=datetime.timezone.utc)
+            datetime.datetime.fromtimestamp(epoch, tz=datetime.UTC)
             .astimezone(self.berlin_time_zone)
             .isoformat()
             for epoch in itertools.islice(
@@ -158,7 +158,7 @@ class FrequencySevenDaylightSavingTest(TestCase):
         ]
 
         actual_isoformats = [
-            datetime.datetime.fromtimestamp(epoch, tz=datetime.timezone.utc)
+            datetime.datetime.fromtimestamp(epoch, tz=datetime.UTC)
             .astimezone(self.berlin_time_zone)
             .isoformat()
             for epoch in itertools.islice(
