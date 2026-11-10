@@ -76,6 +76,25 @@ class ParseCrontabLineTest(TestCase):
         self.assertEqual(actual_command, "1 2 3")
 
 
+class CaseInsensitiveNamesTest(TestCase):
+    @parameterized.expand(
+        [
+            ("0 0 0 1 jan * * mixed-case month", "0 0 0 1 JAN * * mixed-case month"),
+            ("0 0 0 1 Jan * * capitalised month", "0 0 0 1 JAN * * capitalised month"),
+            ("0 0 0 * * mon * mixed-case weekday", "0 0 0 * * MON * mixed-case weekday"),
+        ],
+    )
+    def test_month_and_weekday_names_are_case_insensitive(
+        self,
+        lower_line,
+        upper_line,
+    ):
+        lower_frequency, lower_command = _parse_crontab_line(lower_line)
+        upper_frequency, upper_command = _parse_crontab_line(upper_line)
+        self.assertEqual(lower_frequency.expressions, upper_frequency.expressions)
+        self.assertEqual(lower_command, upper_command)
+
+
 class IterateCrontabEntriesTest(TestCase):
     def test_good(self):
         content = dedent(
