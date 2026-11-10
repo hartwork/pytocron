@@ -82,7 +82,7 @@ def _parse_crontab_line(line: str) -> tuple[croniter.croniter, str]:
     if (m := re.match(_NAMED_FREQUENCY_LINE_PATTERN, line, flags=re.IGNORECASE)) is not None:
         name = m.group("name")
         frequency = _frequency_seven(_NAMED_FREQUENCY[name])
-    elif (m := re.match(_FREQUENCY_SIX_LINE_PATTERN, line)) is not None:
+    elif (m := re.match(_FREQUENCY_SIX_LINE_PATTERN, line, flags=re.IGNORECASE)) is not None:
         frequency = _frequency_seven(m.group("_frequency_seven"))
     else:
         raise CrontabEntrySyntaxError(line)
