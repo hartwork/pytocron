@@ -29,6 +29,14 @@ class ParseCrontabLineTest(TestCase):
                 _frequency_seven("1 2 3 4 5 6 1970"),
             ),
             (
+                "59 59 23 31 DEC THU 2026 1 2 3",
+                _frequency_seven("59 59 23 31 dec thu 2026"),
+            ),
+            (
+                "59 59 23 31 dec thu 2026 1 2 3",
+                _frequency_seven("59 59 23 31 dec thu 2026"),
+            ),
+            (
                 "@annually 1 2 3",
                 _frequency_seven(_NAMED_FREQUENCY["annually"]),
             ),
