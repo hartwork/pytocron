@@ -29,9 +29,9 @@ _NAMED_FREQUENCY["daily"] = _NAMED_FREQUENCY["midnight"]
 _MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
 _WEEKDAYS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
 _ATOM_PATTERN = f"(?:[0-9*/,-]|{'|'.join(_MONTHS)}|{'|'.join(_WEEKDAYS)})"
-_FREQUENCY_SIX_PATTERN = "\\s+".join(f"{_ATOM_PATTERN}+" for _ in range(7))
-_FREQUENCY_SIX_LINE_PATTERN = (
-    f"^(?P<_frequency_seven>{_FREQUENCY_SIX_PATTERN})\\s+(?P<command>[^*].*)$"
+_FREQUENCY_SEVEN_PATTERN = "\\s+".join(f"{_ATOM_PATTERN}+" for _ in range(7))
+_FREQUENCY_SEVEN_LINE_PATTERN = (
+    f"^(?P<_frequency_seven>{_FREQUENCY_SEVEN_PATTERN})\\s+(?P<command>[^*].*)$"
 )
 _NAMED_FREQUENCY_LINE_PATTERN = (
     f"^@(?P<name>{'|'.join(k for k in _NAMED_FREQUENCY)})\\s+(?P<command>\\S.*)$"
@@ -82,7 +82,7 @@ def _parse_crontab_line(line: str) -> tuple[croniter.croniter, str]:
     if (m := re.match(_NAMED_FREQUENCY_LINE_PATTERN, line, flags=re.IGNORECASE)) is not None:
         name = m.group("name")
         frequency = _frequency_seven(_NAMED_FREQUENCY[name])
-    elif (m := re.match(_FREQUENCY_SIX_LINE_PATTERN, line)) is not None:
+    elif (m := re.match(_FREQUENCY_SEVEN_LINE_PATTERN, line, flags=re.IGNORECASE)) is not None:
         frequency = _frequency_seven(m.group("_frequency_seven"))
     else:
         raise CrontabEntrySyntaxError(line)
